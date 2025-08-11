@@ -140,6 +140,8 @@ in
         librewolf
         yt-dlp
         waybar
+        mpv
+        qimgv
     ];
     home.stateVersion = "25.05";
 
@@ -171,6 +173,15 @@ in
       systemd.enable = true;
       xwayland.enable = true;
       settings = {
+        env = [
+          # Hint Electron apps to use Wayland
+          "NIXOS_OZONE_WL,1"
+          "XDG_CURRENT_DESKTOP,Hyprland"
+          "XDG_SESSION_TYPE,wayland"
+          "XDG_SESSION_DESKTOP,Hyprland"
+          "QT_QPA_PLATFORM,wayland"
+        ];
+
         "$mod" = "SUPER";
         "$term" = "alacritty";
         "$browser" = "librewolf";
@@ -181,12 +192,121 @@ in
           "waybar"
           "swww-daemon"
           "swww img '/home/tormented/wallpaper.png'"
+          "wl-paste --type text --watch cliphist store"
+          "wl-paste --type image --watch cliphist store"
         ];
 
         monitor = [
           "Virtual-1, 2560x1440@240,0x0,1.6"
           "DP-1, 2560x1440@240,0x0,1.6"
           "HDMI-A-2, 1920x1080@144,1600x0,1.2"
+        ];
+
+        general = {
+          gaps_in = 4;
+          gaps_out = 10;
+
+          resize_on_border = true;
+
+          border_size = 2;
+          layout = "dwindle";
+        };
+
+        decoration = {
+          rounding = 9;
+
+          active_opacity = 0.85;
+          inactive_opacity = 0.85;
+
+          shadow = {
+            enabled = false;
+          };
+        };
+
+        blur = {
+            enabled = true;
+            size = 4;
+            passes = 4;
+            new_optimizations = true;
+            ignore_opacity = true;
+            xray = false;
+          };
+        };
+
+        misc = {
+          force_default_wallpaper = 0;
+          disable_hyprland_logo = true;
+        };
+
+        windowrulev2 = [
+          "opacity 0.80 0.80,class:^(VS[Cc]odium)$"
+          "opacity 0.80 0.80,class:^(GitHub Desktop)$"
+          "opacity 0.80 0.80,class:^(equibop)$"
+          "opacity 0.80 0.80,class:^(feishin)$"
+          "opacity 0.80 0.80,class:^(thunderbird)$"
+          "opacity 0.80 0.80,class:^(Godot)$"
+
+          "center,class:^(jetbrains-.*)$,title:^(splash)$,floating:1"
+          "nofocus,class:^(jetbrains-.*)$,title:^(splash)$,floating:1"
+          "noborder,class:^(jetbrains-.*)$,title:^(splash)$,floating:1"
+
+          "stayfocused,class:^(jetbrains-.*)$,title:^( )$,floating:1"
+          "noborder,class:^(jetbrains-.*)$,title:^( )$,floating:1"
+
+          "nofocus,class:^(jetbrains-.*)$,title:^(win.*)$,floating:1"
+
+          "opacity 0.80 0.80,class:^([Tt]hunar)$"
+          "opacity 0.80 0.80,class:^(org.prismlauncher.PrismLauncher)$"
+          "opacity 0.80 0.80,class:^(feishin)$"
+          "opacity 0.80 0.80,class:^(xarchiver)$"
+          "opacity 0.80 0.80,class:^(qt5ct)$"
+          "opacity 0.80 0.80,class:^(qt6ct)$"
+          "opacity 0.80 0.80,class:^(kvantummanager)$"
+          "opacity 0.80 0.70,class:^(org.pulseaudio.pavucontrol)$"
+          "opacity 0.80 0.70,class:^(blueman-manager)$"
+          "opacity 0.80 0.70,class:^(nm-applet)$"
+          "opacity 0.80 0.70,class:^(nm-connection-editor)$"
+          "opacity 0.80 0.70,class:^(org.kde.polkit-kde-authentication-agent-1)$"
+          "opacity 0.80 0.70,class:^(polkit-gnome-authentication-agent-1)$"
+          "opacity 0.80 0.70,class:^(org.freedesktop.impl.portal.desktop.gtk)$"
+          "opacity 0.80 0.70,class:^(org.freedesktop.impl.portal.desktop.hyprland)$"
+          "opacity 0.70 0.70,class:^(steamwebhelper)$"
+
+          "opacity 0.80 0.80,class:^(com.github.tchx84.Flatseal)$"
+          "opacity 0.80 0.80,class:^(com.obsproject.Studio)$ # Obs-Qt"
+          "opacity 0.80 0.80,class:^(net.davidotek.pupgui2)$ # ProtonUp-Qt"
+          "opacity 0.80 0.80,class:^(yad)$ # Protontricks-Gtk"
+
+          "float,class:^(org.kde.dolphin)$,title:^(Progress Dialog — Dolphin)$"
+          "float,class:^(org.kde.dolphin)$,title:^(Copying — Dolphin)$"
+          "float,class:^([Tt]hunar)$,title:^(File Operation Progress)$"
+          "size 50% 50%,class:^(librewolf)$,title:^(Save Image)$"
+          "float,class:^(xarchiver)$"
+          "float,title:.*[Ww]inetricks.*"
+          "float,title:^(About Mozilla Firefox)$"
+          "float,class:^(alacritty)$"
+          "float,class:^(qimgv)$"
+
+          "size 50% 50%,class:^(qimgv)$"
+
+          "float,class:^(mpv)$"
+          "float,class:^(qt5ct)$"
+          "float,class:^(qt6ct)$"
+          "float,class:^(org.pulseaudio.pavucontrol)$"
+          "float,class:^(blueman-manager)$"
+          "float,class:^(nm-applet)$"
+          "float,class:^(nm-connection-editor)$"
+          "float,class:^(org.kde.polkit-kde-authentication-agent-1)$"
+
+          "float,class:^(net.davidotek.pupgui2)$ # ProtonUp-Qt"
+          "float,class:^(yad)$ # Protontricks-Gtk"
+
+          "float,title:^(Open)$"
+          "float,title:^(Choose Files)$"
+          "float,title:^(Save As)$"
+          "float,title:^(Confirm to replace files)$"
+          "float,title:^(File Operation Progress)$"
+          "float,class:^(xdg-desktop-portal-gtk)$"
         ];
 
         bind = [
@@ -217,8 +337,6 @@ in
         );
       };
     };
-
-    home.sessionVariables.NIXOS_OZONE_WL = "1";
   };
   
   # List packages installed in system profile.
