@@ -6,6 +6,13 @@
 
 let
     home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/master.tar.gz;
+    nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
+      export __GLX_VENDOR_LIBRARY_NAME=nvidia
+      export LIBVA_DRIVER_NAME,nvidia
+      export __GL_VRR_ALLOWED,1
+      export WLR_DRM_NO_ATOMIC,1
+      exec "$@"
+    '';
 in
 {
   imports =
@@ -19,16 +26,19 @@ in
     experimental-features = [ "nix-command" "flakes" ];
   };
 
-  # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.grub = {
+    enable = true;
+    useOSProber = true;
+    efiSupport = true;
+    device = "nodev";
+  };
+
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   networking.hostName = "chromasen-nix"; # Define your hostname.
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
 
   # Set your time zone.
@@ -63,6 +73,16 @@ in
     enable = true;
   };
 
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        user = "greeter";
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland"; # start Hyprland with a TUI login manager
+      };
+    };
+  };
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.tormented = {
     isNormalUser = true;
@@ -82,9 +102,28 @@ in
   };
 
   hardware = {
-    graphics.enable = true;
-    nvidia.open = false;
-    nvidia.modesetting.enable = true;
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+      extraPackages = with pkgs; [
+        vaapiVdpau
+        libvdpau
+        libvdpau-va-gl 
+        nvidia-vaapi-driver
+        vdpauinfo
+        libva
+        libva-utils	
+        intel-media-driver
+      ];
+  	};
+
+    nvidia = {
+      package = config.boot.kernelPackages.nvidiaPackages.latest;
+      open = false;
+      modesetting.enable = true;
+      nvidiaSettings = true;
+      nvidiaPersistenced = false;
+    };
   };
 
   home-manager.backupFileExtension = "bkp";  
@@ -138,11 +177,23 @@ in
         "$discord" = "equibop";
         "$filemanager" = "thunar";
 
+        exec-once = [
+          "waybar"
+          "swww-daemon"
+          "swww img '/home/tormented/wallpaper.png'"
+        ];
+
+        monitor = [
+          "Virtual-1, 2560x1440@240,0x0,1.6"
+          "DP-1, 2560x1440@240,0x0,1.6"
+          "HDMI-A-2, 1920x1080@144,1600x0,1.2"
+        ];
+
         bind = [
           # mouse movements
           "$mod, mouse:272, movewindow"
-          "$mod, mouse:273, resizewindow"
-          "$mod ALT, mouse:272, resizewindow"
+          "$mod, mouse:273, resizeactive"
+          "$mod ALT, mouse:272, resizeactive"
 
           # keybinds
           "$mod, Q, exec, $term"
@@ -150,6 +201,7 @@ in
           "$mod, D, exec, $discord"
           "$mod, E, exec, $filemanager"
           "$mod, C, killactive"
+          "$mod, W, togglefloating"
         ]
         ++ (
           # workspaces
@@ -172,6 +224,7 @@ in
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
+    nvidia-offload
     gedit
     wget
     git
@@ -206,6 +259,5 @@ in
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "25.05"; # Did you read the comment?
-
 }
 
