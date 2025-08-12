@@ -33,6 +33,7 @@ in
     device = "nodev";
   };
 
+  boot.initrd.luks.devices."luks-453e7619-939d-409d-be3e-251b853fd1b8".device = "/dev/disk/by-uuid/453e7619-939d-409d-be3e-251b853fd1b8";
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Use latest kernel.
@@ -84,7 +85,7 @@ in
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.tormented = {
+  users.users.t0r = {
     isNormalUser = true;
     shell = pkgs.fish;
     extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
