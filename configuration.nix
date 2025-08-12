@@ -71,7 +71,7 @@ in
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.tormented = {
+  users.users.t0r = {
     isNormalUser = true;
     shell = pkgs.fish;
     extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
