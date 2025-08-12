@@ -6,13 +6,6 @@
 
 let
     home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/master.tar.gz;
-    nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
-      export __GLX_VENDOR_LIBRARY_NAME=nvidia
-      export LIBVA_DRIVER_NAME,nvidia
-      export __GL_VRR_ALLOWED,1
-      export WLR_DRM_NO_ATOMIC,1
-      exec "$@"
-    '';
 in
 {
   imports =
@@ -26,13 +19,7 @@ in
     experimental-features = [ "nix-command" "flakes" ];
   };
 
-  boot.loader.grub = {
-    enable = true;
-    useOSProber = true;
-    efiSupport = true;
-    device = "nodev";
-  };
-
+  boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Use latest kernel.
@@ -78,7 +65,7 @@ in
     settings = {
       default_session = {
         user = "greeter";
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland"; # start Hyprland with a TUI login manager
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland"; # start Hyprland with a TUI login manager
       };
     };
   };
@@ -104,7 +91,7 @@ in
   hardware = {
     graphics = {
       enable = true;
-      enable32Bit = true;
+      #enable32Bit = true;
       extraPackages = with pkgs; [
         vaapiVdpau
         libvdpau
@@ -122,7 +109,7 @@ in
       open = false;
       modesetting.enable = true;
       nvidiaSettings = true;
-      nvidiaPersistenced = false;
+      #nvidiaPersistenced = false;
     };
   };
 
@@ -191,13 +178,11 @@ in
         exec-once = [
           "waybar"
           "swww-daemon"
-          "swww img '/home/tormented/wallpaper.png'"
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
         ];
 
         monitor = [
-          "Virtual-1, 2560x1440@240,0x0,1.6"
           "DP-1, 2560x1440@240,0x0,1.6"
           "HDMI-A-2, 1920x1080@144,1600x0,1.2"
         ];
@@ -224,13 +209,12 @@ in
         };
 
         blur = {
-            enabled = true;
-            size = 4;
-            passes = 4;
-            new_optimizations = true;
-            ignore_opacity = true;
-            xray = false;
-          };
+          enabled = true;
+          size = 4;
+          passes = 4;
+          new_optimizations = true;
+          ignore_opacity = true;
+          xray = false;
         };
 
         misc = {
@@ -322,7 +306,7 @@ in
           "blur,waybar"
 
           "blur,gtk-layer-shell"
-          "layerrule=ignorezero, gtk-layer-shell"
+          "ignorezero, gtk-layer-shell"
         ];
 
         bind = [
@@ -358,7 +342,6 @@ in
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
-    nvidia-offload
     gedit
     wget
     git
@@ -392,6 +375,6 @@ in
   # and migrated your data accordingly.
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "25.05"; # Did you read the comment?
+  system.stateVersion = "25.11"; # Did you read the comment?
 }
 
