@@ -36,11 +36,6 @@ in
     enable = true;
   };
 
-  tmp = {
-    useTmpfs = false;
-    tmpfsSize = "30%";
-  };
-
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Use Zen kernel.
@@ -53,19 +48,19 @@ in
   }; 
 
   # Set your time zone.
-  i18n.defaultLocale = "en_US.UTF-8";
+  i18n.defaultLocale = "en_AU.UTF-8";
   services.automatic-timezoned.enable = true; #based on IP location
 
   i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_US.UTF-8";
-    LC_IDENTIFICATION = "en_US.UTF-8";
-    LC_MEASUREMENT = "en_US.UTF-8";
-    LC_MONETARY = "en_US.UTF-8";
-    LC_NAME = "en_US.UTF-8";
-    LC_NUMERIC = "en_US.UTF-8";
-    LC_PAPER = "en_US.UTF-8";
-    LC_TELEPHONE = "en_US.UTF-8";
-    LC_TIME = "en_US.UTF-8";
+    LC_ADDRESS = "en_AU.UTF-8";
+    LC_IDENTIFICATION = "en_AU.UTF-8";
+    LC_MEASUREMENT = "en_AU.UTF-8";
+    LC_MONETARY = "en_AU.UTF-8";
+    LC_NAME = "en_AU.UTF-8";
+    LC_NUMERIC = "en_AU.UTF-8";
+    LC_PAPER = "en_AU.UTF-8";
+    LC_TELEPHONE = "en_AU.UTF-8";
+    LC_TIME = "en_AU.UTF-8";
   };
   
   programs.fish.enable = true;  
@@ -137,7 +132,7 @@ in
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.t0r = {
+  users.users.tormented = {
     isNormalUser = true;
     shell = pkgs.fish;
     extraGroups = [ 
@@ -164,19 +159,11 @@ in
   };
   
   services.xserver.videoDrivers = [ "nvidia" ];
-  drivers = {
-    nvidia.enable = true;
-    intel.enable = true;
-  };
-
-  nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
-  };
 
   hardware = {
     graphics = {
       enable = true;
-      #enable32Bit = true;
+      enable32Bit = true;
       extraPackages = with pkgs; [
         vaapiVdpau
         libvdpau
@@ -185,7 +172,6 @@ in
         vdpauinfo
         libva
         libva-utils	
-        intel-media-driver
       ];
   	};
 
@@ -265,11 +251,6 @@ in
           "swww-daemon"
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
-        ];
-
-        monitor = [
-          "DP-1, 2560x1440@240,0x0,1.6"
-          "HDMI-A-2, 1920x1080@144,1600x0,1.2"
         ];
 
         general = {
@@ -376,22 +357,6 @@ in
           "float,title:^(Confirm to replace files)$"
           "float,title:^(File Operation Progress)$"
           "float,class:^(xdg-desktop-portal-gtk)$"
-        ];
-
-        layerrule = [
-          "blur,rofi"
-          "ignorezero,rofi"
-          "blur,notifications"
-          "ignorezero,notifications"
-          "blur,swaync-notification-window"
-          "ignorezero,swaync-notification-window"
-          "blur,swaync-control-center"
-          "ignorezero,swaync-control-center"
-          "blur,logout_dialog"
-          "blur,waybar"
-
-          "blur,gtk-layer-shell"
-          "ignorezero, gtk-layer-shell"
         ];
 
         bind = [
