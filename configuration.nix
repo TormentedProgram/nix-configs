@@ -19,17 +19,54 @@ in
     experimental-features = [ "nix-command" "flakes" ];
   };
 
-  boot.loader.systemd-boot.enable = true;
+  boot.kernelParams = [
+    "systemd.mask=systemd-vconsole-setup.service"
+    "systemd.mask=dev-tpmrm0.device" #this is to mask that stupid 1.5 mins systemd bug
+    "nowatchdog" 
+    "modprobe.blacklist=sp5100_tco" #watchdog for AMD
+    "modprobe.blacklist=iTCO_wdt" #watchdog for Intel
+  ];
+
+  boot.initrd = { 
+    availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
+    kernelModules = [ ];
+  };
+
+  boot.loader.systemd-boot = {
+    enable = true;
+  };
+
+  tmp = {
+    useTmpfs = false;
+    tmpfsSize = "30%";
+  };
+
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # Use Zen kernel.
+  boot.kernelPackages = pkgs.linuxPackages_zen;
 
-  networking.hostName = "chromasen-nix"; # Define your hostname.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  networking = {
+    networkmanager.enable = true;
+    hostName = "chromasen-nix"; # Define your hostname.
+    timeServers = options.networking.timeServers.default ++ [ "pool.ntp.org" ];
+  }; 
 
   # Set your time zone.
-  time.timeZone = "Australia/Sydney";
+  i18n.defaultLocale = "en_US.UTF-8";
+  services.automatic-timezoned.enable = true; #based on IP location
+
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "en_US.UTF-8";
+    LC_IDENTIFICATION = "en_US.UTF-8";
+    LC_MEASUREMENT = "en_US.UTF-8";
+    LC_MONETARY = "en_US.UTF-8";
+    LC_NAME = "en_US.UTF-8";
+    LC_NUMERIC = "en_US.UTF-8";
+    LC_PAPER = "en_US.UTF-8";
+    LC_TELEPHONE = "en_US.UTF-8";
+    LC_TIME = "en_US.UTF-8";
+  };
   
   programs.fish.enable = true;  
   users.defaultUserShell = pkgs.fish;
@@ -45,6 +82,18 @@ in
     pulse.enable = true;
   };
   
+  fonts = {
+    packages = with pkgs; [
+      noto-fonts
+      fira-code
+      noto-fonts-cjk-sans
+      jetbrains-mono
+      nerd-fonts.jetbrains-mono # unstable
+      nerd-fonts.fira-code # unstable
+      nerd-fonts.fantasque-sans-mono #unstable
+      ];
+  };
+
   nixpkgs.config.allowUnfree = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
@@ -52,8 +101,25 @@ in
 
   programs.hyprland = {
     enable = true;
+    portalPackage = pkgs.xdg-desktop-portal-hyprland;
+  	xwayland.enable = true;
     withUWSM = true; # recommended for most users
   };
+
+  xdg.portal = {
+    enable = true;
+    wlr.enable = false;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+    ];
+    configPackages = [
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal
+    ];
+  };
+
+  programs.waybar.enable = true;
+  programs.xwayland.enable = true;
 
   services.gvfs.enable = true;
   programs.thunar = {
@@ -74,7 +140,16 @@ in
   users.users.t0r = {
     isNormalUser = true;
     shell = pkgs.fish;
-    extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ 
+      "wheel" 
+      "networkmanager"
+      "libvirtd"
+      "scanner"
+      "lp"
+      "video" 
+      "input" 
+      "audio"  
+    ];
     packages = with pkgs; [
       equibop
       vscodium
@@ -86,6 +161,16 @@ in
       github-desktop
       tree
     ];
+  };
+  
+  services.xserver.videoDrivers = [ "nvidia" ];
+  drivers = {
+    nvidia.enable = true;
+    intel.enable = true;
+  };
+
+  nixpkgs.config.packageOverrides = pkgs: {
+    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
   };
 
   hardware = {
@@ -337,6 +422,9 @@ in
         );
       };
     };
+
+    home.sessionVariables.NIXOS_OZONE_WL = "1";
+    home.sessionVariables.QML_IMPORT_PATH = "${pkgs.hyprland-qt-support}/lib/qt-6/qml";
   };
   
   # List packages installed in system profile.
@@ -344,6 +432,11 @@ in
   environment.systemPackages = with pkgs; [
     gedit
     wget
+    curl
+    hypridle
+    cliphist
+    hyprland-qt-support # for hyprland-qt-support
+    clang
     git
     gvfs
     swww
