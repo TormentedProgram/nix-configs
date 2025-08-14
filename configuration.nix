@@ -46,7 +46,6 @@ in
   networking = {
     networkmanager.enable = true;
     hostName = "chromasen-nix"; # Define your hostname.
-    timeServers = options.networking.timeServers.default ++ [ "pool.ntp.org" ];
   }; 
 
   # Set your time zone.
@@ -76,7 +75,10 @@ in
   # OR
   services.pipewire = {
     enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
     pulse.enable = true;
+    jack.enable = true;
   };
   
   fonts = {
@@ -115,6 +117,7 @@ in
     ];
   };
 
+  programs.dconf.enable = true;
   programs.waybar.enable = true;
   programs.xwayland.enable = true;
 
@@ -153,10 +156,13 @@ in
       steam
       protonup-qt
       lutris
+      prismlauncher
       xfce.tumbler
       ffmpegthumbnailer
       github-desktop
       tree
+      feishin
+      navidrome
     ];
   };
   
@@ -201,6 +207,7 @@ in
         yt-dlp
         waybar
         mpv
+	vscodium
         qimgv
     ];
     home.stateVersion = "25.05";
@@ -225,13 +232,18 @@ in
     	    terminal.shell = {
     	        program = "fish";
     	    };
+          window = {
+            opacity = 0.8;
+          };
     	};
     };
     
     wayland.windowManager.hyprland = {
       enable = true;
       systemd.enable = true;
-      xwayland.enable = true;
+      xwayland = {
+        enable = true;
+      };
       settings = {
         env = [
           "LIBVA_DRIVER_NAME,nvidia"
@@ -243,6 +255,10 @@ in
           "XDG_SESSION_TYPE,wayland"
           "XDG_SESSION_DESKTOP,Hyprland"
           "QT_QPA_PLATFORM,wayland"
+          "HYPRCURSOR_THEME,Bibata-Modern-Ice"
+          "HYPRCURSOR_SIZE,24"
+          "XCURSOR_THEME,Bibata-Modern-Ice"
+          "XCURSOR_SIZE,24"
         ];
 
         "$mod" = "SUPER";
@@ -252,10 +268,12 @@ in
         "$filemanager" = "thunar";
 
         exec-once = [
-          "waybar"
-          "swww-daemon"
+          "pkill swww;sleep .5 && swww-daemon && swww img '/home/tormented/Pictures/wallpapers/current.png'"
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
+          "systemctl --user start hyprpolkitagent"
+          "hyprctl setcursor Bibata-Modern-Ice 32"
+          "navidrome"
         ];
 
         general = {
@@ -268,35 +286,74 @@ in
           layout = "dwindle";
         };
 
+        xwayland = {
+          force_zero_scaling = true;
+        };
+        
+        animations = {
+          enabled = true;
+          bezier = [
+            "wind, 0.05, 0.9, 0.1, 1.05"
+            "winIn, 0.1, 1.1, 0.1, 1.1"
+            "winOut, 0.3, -0.3, 0, 1"
+            "liner, 1, 1, 1, 1"
+          ];
+          animation = [
+            "windows, 1, 6, wind, slide"
+            "windowsIn, 1, 6, winIn, slide"
+            "windowsOut, 1, 5, winOut, slide"
+            "windowsMove, 1, 5, wind, slide"
+            "border, 1, 1, liner"
+            "borderangle, 1, 30, liner, loop"
+            "fade, 1, 10, default"
+            "workspaces, 1, 5, wind"
+          ];
+        };
+
         decoration = {
           rounding = 9;
 
-          active_opacity = 0.85;
-          inactive_opacity = 0.85;
-
+          blur = {
+            enabled = true;
+            size = 6;
+            passes = 3;
+            ignore_opacity = true;
+            new_optimizations = true;
+            xray = false;
+          };
           shadow = {
             enabled = false;
           };
         };
-
-        blur = {
-          enabled = true;
-          size = 4;
-          passes = 4;
-          new_optimizations = true;
-          ignore_opacity = true;
-          xray = false;
-        };
+	
+	      monitor = [
+          "DP-1, 2560x1440@240,0x0,1.6"
+          "HDMI-A-2, 1920x1080@144,1600x0,1.2"
+        ];	
 
         misc = {
           force_default_wallpaper = 0;
           disable_hyprland_logo = true;
         };
 
+        ecosystem = {
+          no_donation_nag = true;
+          no_update_news = true;
+        };
+
+        cursor = {
+          sync_gsettings_theme = true;
+          no_hardware_cursors = 2; # change to 1 if want to disable
+          enable_hyprcursor = false;
+          warp_on_change_workspace = 1;
+          no_warps = true;
+        };
+
+
         windowrulev2 = [
           "opacity 0.80 0.80,class:^(VS[Cc]odium)$"
           "opacity 0.80 0.80,class:^(GitHub Desktop)$"
-          "opacity 0.80 0.80,class:^(equibop)$"
+          "opacity 1.0 1.0,class:^(equibop)$"
           "opacity 0.80 0.80,class:^(feishin)$"
           "opacity 0.80 0.80,class:^(thunderbird)$"
           "opacity 0.80 0.80,class:^(Godot)$"
@@ -339,7 +396,7 @@ in
           "float,class:^(xarchiver)$"
           "float,title:.*[Ww]inetricks.*"
           "float,title:^(About Mozilla Firefox)$"
-          "float,class:^(alacritty)$"
+          "float,class:^([Aa]lacritty)$"
           "float,class:^(qimgv)$"
 
           "size 50% 50%,class:^(qimgv)$"
@@ -368,17 +425,19 @@ in
           disable_logs = false;
         };
 
-        bind = [
+        bindm = [
           # mouse movements
           "$mod, mouse:272, movewindow"
-          "$mod, mouse:273, resizeactive"
-          "$mod ALT, mouse:272, resizeactive"
+          "$mod, mouse:273, resizewindow"
+        ];
 
+        bind = [
           # keybinds
           "$mod, Q, exec, $term"
           "$mod, F, exec, $browser"
           "$mod, D, exec, $discord"
           "$mod, E, exec, $filemanager"
+	        "$mod, S, exec, rofi -show drun"
           "$mod, C, killactive"
           "$mod, W, togglefloating"
         ]
@@ -395,6 +454,18 @@ in
             9)
         );
       };
+      extraConfig = "
+        layerrule = blur,rofi
+        layerrule = ignorezero,rofi
+        layerrule = blur,notifications
+        layerrule = ignorezero,notifications
+        layerrule = blur,swaync-notification-window
+        layerrule = ignorezero,swaync-notification-window
+        layerrule = blur,swaync-control-center
+        layerrule = ignorezero,swaync-control-center
+        layerrule = blur,logout_dialog
+        layerrule = blur,waybar
+      ";
     };
 
     home.sessionVariables.NIXOS_OZONE_WL = "1";
@@ -404,10 +475,15 @@ in
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
+    headsetcontrol
     gedit
     wget
     curl
     hypridle
+    adwaita-icon-theme
+    gsettings-desktop-schemas
+    glib
+    hyprcursor
     cliphist
     hyprland-qt-support # for hyprland-qt-support
     clang
@@ -416,6 +492,8 @@ in
     swww
     ffmpeg
     wl-clipboard
+    hyprpolkitagent
+    pavucontrol
     grimblast
   ];
 
@@ -444,4 +522,3 @@ in
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "25.11"; # Did you read the comment?
 }
-
