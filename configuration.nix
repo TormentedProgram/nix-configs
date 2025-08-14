@@ -359,6 +359,10 @@ in
           "float,class:^(xdg-desktop-portal-gtk)$"
         ];
 
+        debug = {
+          disable_logs = false;
+        };
+
         bind = [
           # mouse movements
           "$mod, mouse:272, movewindow"
