@@ -119,6 +119,7 @@ in
 
   programs.dconf.enable = true;
   programs.waybar.enable = true;
+
   programs.xwayland.enable = true;
 
   services.gvfs.enable = true;
@@ -196,19 +197,19 @@ in
   home-manager.users.tormented = { pkgs, ...}: {
     home.packages = with pkgs; [
     	xfce.thunar
-        thunderbird
-        xarchiver
-        starship
-        fish
-        fastfetch
-        rofi-wayland
-        alacritty
-        librewolf
-        yt-dlp
-        waybar
-        mpv
-	vscodium
-        qimgv
+      thunderbird
+      xarchiver
+      starship
+      fish
+      fastfetch
+      rofi-wayland
+      alacritty
+      librewolf
+      yt-dlp
+      waybar
+      mpv
+      vscodium
+      qimgv
     ];
     home.stateVersion = "25.05";
 
@@ -226,6 +227,297 @@ in
     	};
     };
 
+    programs.waybar = {
+      enable = true;
+      settings = [
+        {
+          layer = "top";
+          position = "top";
+          modules-center = [ "hyprland/workspaces" ];
+          modules-left = [
+            "custom/startmenu"
+            "custom/arrow6"
+            "pulseaudio"
+            "cpu"
+            "memory"
+            "idle_inhibitor"
+            "custom/arrow7"
+            "hyprland/window"
+          ];
+          modules-right = [
+            "custom/arrow4"
+            "custom/hyprbindings"
+            "custom/arrow3"
+            "custom/notification"
+            "custom/arrow3"
+            "custom/exit"
+            "battery"
+            "custom/arrow2"
+            "tray"
+            "custom/arrow1"
+            "clock"
+          ];
+
+          "hyprland/workspaces" = {
+            format = "{name}";
+            format-icons = {
+              default = " ";
+              active = " ";
+              urgent = " ";
+            };
+            on-scroll-up = "hyprctl dispatch workspace e+1";
+            on-scroll-down = "hyprctl dispatch workspace e-1";
+          };
+          "clock" = {
+            format = '' {:L%I:%M %p}'';
+            tooltip = true;
+            tooltip-format = "<big>{:%A, %d.%B %Y }</big>\n<tt><small>{calendar}</small></tt>";
+          };
+          "hyprland/window" = {
+            max-length = 22;
+            separate-outputs = false;
+            rewrite = {
+              "" = "IM FUCKING WINDOWLESS :( ";
+            };
+          };
+          "memory" = {
+            interval = 5;
+            format = " {}%";
+            tooltip = true;
+          };
+          "cpu" = {
+            interval = 5;
+            format = " {usage:2}%";
+            tooltip = true;
+          };
+          "disk" = {
+            format = " {free}";
+            tooltip = true;
+          };
+          "network" = {
+            format-icons = [
+              "󰤯"
+              "󰤟"
+              "󰤢"
+              "󰤥"
+              "󰤨"
+            ];
+            format-ethernet = " {bandwidthDownOctets}";
+            format-wifi = "{icon} {signalStrength}%";
+            format-disconnected = "󰤮";
+            tooltip = false;
+          };
+          "tray" = {
+            spacing = 12;
+          };
+          "pulseaudio" = {
+            format = "{icon} {volume}% {format_source}";
+            format-bluetooth = "{volume}% {icon} {format_source}";
+            format-bluetooth-muted = " {icon} {format_source}";
+            format-muted = " {format_source}";
+            format-source = " {volume}%";
+            format-source-muted = "";
+            format-icons = {
+              headphone = "";
+              hands-free = "";
+              headset = "";
+              phone = "";
+              portable = "";
+              car = "";
+              default = [
+                ""
+                ""
+                ""
+              ];
+            };
+            on-click = "sleep 0.1 && pavucontrol";
+          };
+          "custom/exit" = {
+            tooltip = false;
+            format = "";
+            on-click = "sleep 0.1 && wlogout";
+          };
+          "custom/startmenu" = {
+            tooltip = false;
+            format = "";
+            on-click = "sleep 0.1 && rofi-launcher";
+          };
+          "custom/hyprbindings" = {
+            tooltip = false;
+            format = "󱕴";
+            on-click = "sleep 0.1 && list-keybinds";
+          };
+          "idle_inhibitor" = {
+            format = "{icon}";
+            format-icons = {
+              activated = "";
+              deactivated = "";
+            };
+            tooltip = "true";
+          };
+          "custom/notification" = {
+            tooltip = false;
+            format = "{icon} {}";
+            format-icons = {
+              notification = "<span foreground='red'><sup></sup></span>";
+              none = "";
+              dnd-notification = "<span foreground='red'><sup></sup></span>";
+              dnd-none = "";
+              inhibited-notification = "<span foreground='red'><sup></sup></span>";
+              inhibited-none = "";
+              dnd-inhibited-notification = "<span foreground='red'><sup></sup></span>";
+              dnd-inhibited-none = "";
+            };
+            return-type = "json";
+            exec-if = "which swaync-client";
+            exec = "swaync-client -swb";
+            on-click = "sleep 0.1 && task-waybar";
+            escape = true;
+          };
+          "battery" = {
+            states = {
+              warning = 30;
+              critical = 15;
+            };
+            format = "{icon} {capacity}%";
+            format-charging = "󰂄 {capacity}%";
+            format-plugged = "󱘖 {capacity}%";
+            format-icons = [
+              "󰁺"
+              "󰁻"
+              "󰁼"
+              "󰁽"
+              "󰁾"
+              "󰁿"
+              "󰂀"
+              "󰂁"
+              "󰂂"
+              "󰁹"
+            ];
+            on-click = "";
+            tooltip = false;
+          };
+          "custom/arrow1" = {
+            format = "";
+          };
+          "custom/arrow2" = {
+            format = "";
+          };
+          "custom/arrow3" = {
+            format = "";
+          };
+          "custom/arrow4" = {
+            format = "";
+          };
+          "custom/arrow5" = {
+            format = "";
+          };
+          "custom/arrow6" = {
+            format = "";
+          };
+          "custom/arrow7" = {
+            format = "";
+          };
+        }
+      ];
+
+      style = lib.concatStrings [
+        ''
+          * {
+            font-family: JetBrainsMono Nerd Font Mono;
+            font-size: 14px;
+            border-radius: 0px;
+            border: none;
+            min-height: 0px;
+          }
+          window#waybar {
+            background: #1C1C1C;
+            color: #e9e9f4;
+          }
+          #workspaces button {
+            padding: 0px 5px;
+            background: transparent;
+            color: #62d6e8;
+          }
+          #workspaces button.active {
+            color: #e9e9f4;
+          }
+          #workspaces button:hover {
+            color: #e9e9f4;
+          }
+          tooltip {
+            background: #1C1C1C;
+            border: 1px solid #e9e9f4;
+            border-radius: 12px;
+          }
+          tooltip label {
+            color: #e9e9f4;
+          }
+          #window {
+            padding: 0px 10px;
+          }
+          #pulseaudio, #cpu, #memory, #idle_inhibitor {
+            padding: 0px 10px;
+            background: #62d6e8;
+            color: #1C1C1C;
+          }
+          #custom-startmenu {
+            color: #4d4f68;
+            padding: 0px 14px;
+            font-size: 20px;
+            background: #c3fffe;
+          }
+          #custom-hyprbindings, #network, #battery,
+          #custom-notification, #custom-exit {
+            background: #00f769;
+            color: #1C1C1C;
+            padding: 0px 10px;
+          }
+          #tray {
+            background: #4d4f68;
+            color: #1C1C1C;
+            padding: 0px 10px;
+          }
+          #clock {
+            font-weight: bold;
+            padding: 0px 10px;
+            color: #1C1C1C;
+            background: #b45bcf;
+          }
+          #custom-arrow1 {
+            font-size: 24px;
+            color: #b45bcf;
+            background: #4d4f68;
+          }
+          #custom-arrow2 {
+            font-size: 24px;
+            color: #4d4f68;
+            background: #00f769;
+          }
+          #custom-arrow3 {
+            font-size: 24px;
+            color: #1C1C1C;
+            background: #00f769;
+          }
+          #custom-arrow4 {
+            font-size: 24px;
+            color: #00f769;
+            background: transparent;
+          }
+          #custom-arrow6 {
+            font-size: 24px;
+            color: #c3fffe;
+            background: #62d6e8;
+          }
+          #custom-arrow7 {
+            font-size: 24px;
+            color: #62d6e8;
+            background: transparent;
+          }
+        ''
+      ];
+    };
+
     programs.alacritty = {
     	enable = true;
     	settings = {
@@ -233,7 +525,7 @@ in
     	        program = "fish";
     	    };
           window = {
-            opacity = 0.8;
+            opacity = 0.75;
           };
     	};
     };
@@ -353,7 +645,7 @@ in
         windowrulev2 = [
           "opacity 0.80 0.80,class:^(VS[Cc]odium)$"
           "opacity 0.80 0.80,class:^(GitHub Desktop)$"
-          "opacity 1.0 1.0,class:^(equibop)$"
+          "opacity 0.90 0.90,class:^(equibop)$"
           "opacity 0.80 0.80,class:^(feishin)$"
           "opacity 0.80 0.80,class:^(thunderbird)$"
           "opacity 0.80 0.80,class:^(Godot)$"
@@ -397,6 +689,7 @@ in
           "float,title:.*[Ww]inetricks.*"
           "float,title:^(About Mozilla Firefox)$"
           "float,class:^([Aa]lacritty)$"
+          "size 72% 70%,class:^([Aa]lacritty)$"
           "float,class:^(qimgv)$"
 
           "size 50% 50%,class:^(qimgv)$"
@@ -439,6 +732,8 @@ in
           "$mod, E, exec, $filemanager"
 	        "$mod, S, exec, rofi -show drun"
           "$mod, C, killactive"
+          " , f11, fullscreen"
+          "$mod Shift, S, exec, /usr/bin/screenshot.sh sf"
           "$mod, W, togglefloating"
         ]
         ++ (
@@ -488,6 +783,7 @@ in
     hyprland-qt-support # for hyprland-qt-support
     clang
     git
+    imagemagick
     gvfs
     swww
     ffmpeg
@@ -495,6 +791,7 @@ in
     hyprpolkitagent
     pavucontrol
     grimblast
+    swappy
   ];
 
   # Open ports in the firewall.
@@ -522,3 +819,5 @@ in
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "25.11"; # Did you read the comment?
 }
+
+
