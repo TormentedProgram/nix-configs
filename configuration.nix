@@ -234,7 +234,10 @@ in
       xwayland.enable = true;
       settings = {
         env = [
-          # Hint Electron apps to use Wayland
+          "LIBVA_DRIVER_NAME,nvidia"
+          "__GLX_VENDOR_LIBRARY_NAME,nvidia"
+          "__GL_VRR_ALLOWED,1"
+          "WLR_DRM_NO_ATOMIC,1"
           "NIXOS_OZONE_WL,1"
           "XDG_CURRENT_DESKTOP,Hyprland"
           "XDG_SESSION_TYPE,wayland"
