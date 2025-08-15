@@ -160,6 +160,7 @@ in
       prismlauncher
 	  teams-for-linux
       xfce.tumbler
+	  xfce.xfce4-settings
       ffmpegthumbnailer
       github-desktop
       obs-studio
