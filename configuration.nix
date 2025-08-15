@@ -161,6 +161,7 @@ in
       xfce.tumbler
       ffmpegthumbnailer
       github-desktop
+      obs-studio
       tree
       feishin
       navidrome
@@ -200,7 +201,7 @@ in
   };
 
   home-manager.backupFileExtension = "bkp";  
-  home-manager.users.tormented = { pkgs, ...}: {
+  home-manager.users.tormented = { pkgs, config, ...}: {
     home.packages = with pkgs; [
     	xfce.thunar
       thunderbird
@@ -264,6 +265,51 @@ in
     	};
     };
 
+    programs.rofi = {
+      enable = true;
+      package = pkgs.rofi-wayland;
+      theme = let
+        inherit (config.lib.formats.rasi) mkLiteral;
+      in {
+        "*" = {
+          bg = mkLiteral "#24283b";
+          hv = mkLiteral "#9274ca";
+          primary = mkLiteral "#C5C8C6";
+          ug = mkLiteral "#0B2447";
+          background-color = mkLiteral "#24283b";
+          foreground-color = mkLiteral "#C5C8C6";
+          border = 0;
+          kl = "#7aa2f7";
+        };
+
+        "#window" = {
+          width = 700;
+          orientation = mkLiteral "horizontal";
+          border-color = mkLiteral "@primary";
+          border = 3;
+          border-radius = 6;
+          spacing = 0;
+          children = map mkLiteral [ "mainbox" ];
+        };
+
+        "#mainbox" = {
+          spacing = 0;
+          children = map mkLiteral [ "inputbar" "message" "listview" ];
+        };
+
+        "#inputbar" = {
+          color = mkLiteral "@kl";
+          padding = 11;
+          border-color = "@primary";
+        };
+
+        "#textbox" = {
+          color = mkLiteral "@kl";
+          padding = 10;
+        };
+      };
+    };
+
     programs.waybar = {
       enable = true;
       settings = [
@@ -313,9 +359,6 @@ in
           "hyprland/window" = {
             max-length = 22;
             separate-outputs = false;
-            rewrite = {
-              "" = "IM FUCKING WINDOWLESS :( ";
-            };
           };
           "memory" = {
             interval = 5;
@@ -377,7 +420,7 @@ in
           "custom/startmenu" = {
             tooltip = false;
             format = "";
-            on-click = "sleep 0.1 && rofi-launcher";
+            on-click = "sleep 0.1 && rofi -show drun";
           };
           "custom/hyprbindings" = {
             tooltip = false;
@@ -507,7 +550,7 @@ in
           }
           #custom-hyprbindings, #network, #battery,
           #custom-notification, #custom-exit {
-            background: #00f769;
+            background: #62d6e8;
             color: rgba(28, 28, 28, 0.7);
             padding: 0px 10px;
           }
@@ -520,26 +563,26 @@ in
             font-weight: bold;
             padding: 0px 10px;
             color: rgba(28, 28, 28, 0.7);
-            background: #8ffffd;
+            background: #c3fffe;
           }
           #custom-arrow1 {
             font-size: 24px;
-            color: #8ffffd;
+            color: #c3fffe;
             background: #4d4f68;
           }
           #custom-arrow2 {
             font-size: 24px;
             color: #4d4f68;
-            background: #00f769;
+            background: #62d6e8;
           }
           #custom-arrow3 {
             font-size: 24px;
             color: rgba(28, 28, 28, 0.7);
-            background: #00f769;
+            background: #62d6e8;
           }
           #custom-arrow4 {
             font-size: 24px;
-            color: #00f769;
+            color: #62d6e8;
             background: transparent;
           }
           #custom-arrow6 {
@@ -585,10 +628,6 @@ in
           "XDG_SESSION_TYPE,wayland"
           "XDG_SESSION_DESKTOP,Hyprland"
           "QT_QPA_PLATFORM,wayland"
-          "HYPRCURSOR_THEME,Bibata-Modern-Ice"
-          "HYPRCURSOR_SIZE,24"
-          "XCURSOR_THEME,Bibata-Modern-Ice"
-          "XCURSOR_SIZE,24"
           "GTK_THEME,Orchis-Dark"
           "QT_STYLE_OVERRIDE,adwaita-dark"
         ];
@@ -604,8 +643,8 @@ in
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
           "systemctl --user start hyprpolkitagent"
-          "hyprctl setcursor Bibata-Modern-Ice 32"
           "navidrome"
+          "thunderbird"
         ];
 
         general = {
@@ -675,12 +714,9 @@ in
 
         cursor = {
           sync_gsettings_theme = true;
-          no_hardware_cursors = 2; # change to 1 if want to disable
-          enable_hyprcursor = false;
           warp_on_change_workspace = 1;
           no_warps = true;
         };
-
 
         windowrulev2 = [
           "center,class:^(jetbrains-.*)$,title:^(splash)$,floating:1"
@@ -691,8 +727,9 @@ in
           "noborder,class:^(jetbrains-.*)$,title:^( )$,floating:1"
 
           "nofocus,class:^(jetbrains-.*)$,title:^(win.*)$,floating:1"
-
-          "opacity 0.80 0.80,class:^([Tt]hunar)$"
+          
+          "opacity 0.85 0.85,class:^([Tt]hunar)$"
+          "opacity 0.90 0.90,class:^([Tt]hunderbird)$"
           "opacity 0.95 0.95,class:^(org.prismlauncher.PrismLauncher)$"
           "opacity 0.95 0.95,class:^(codium)$"
           "opacity 0.90 0.90,class:^(equibop)$"
@@ -815,7 +852,6 @@ in
     gnome-themes-extra
     gsettings-desktop-schemas
     glib
-    hyprcursor
     cliphist
     hyprland-qt-support # for hyprland-qt-support
     clang
