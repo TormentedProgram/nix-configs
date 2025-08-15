@@ -158,6 +158,7 @@ in
       nicotine-plus
       nero-umu
       prismlauncher
+	  teams-for-linux
       xfce.tumbler
       ffmpegthumbnailer
       github-desktop
@@ -639,7 +640,7 @@ in
         "$filemanager" = "thunar";
 
         exec-once = [
-          "pkill swww;sleep .5 && swww-daemon && swww img '/home/tormented/Pictures/wallpapers/current.png'"
+          "pkill swww;sleep .5 && swww-daemon && swww img '$HOME/Pictures/wallpapers/current.png'"
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
           "systemctl --user start hyprpolkitagent"
