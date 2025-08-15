@@ -39,7 +39,7 @@ in
   };
 
   boot.loader.efi.canTouchEfiVariables = true;
-
+  
   # Use Zen kernel.
   boot.kernelPackages = pkgs.linuxPackages_zen;
 
@@ -98,6 +98,8 @@ in
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
 
+  programs.waybar.enable = true;
+
   programs.hyprland = {
     enable = true;
     portalPackage = pkgs.xdg-desktop-portal-hyprland;
@@ -117,26 +119,20 @@ in
     ];
   };
 
-  programs.dconf.enable = true;
-  programs.waybar.enable = true;
-
   programs.xwayland.enable = true;
 
+  programs.xfconf.enable = true;
   services.gvfs.enable = true;
+  services.tumbler.enable = true; # Thumbnail support for images
   programs.thunar = {
     enable = true;
+    plugins = with pkgs.xfce; [
+      thunar-archive-plugin
+      thunar-volman
+    ];
   };
 
-  services.greetd = {
-    enable = true;
-    settings = {
-      default_session = {
-        user = "greeter";
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland"; # start Hyprland with a TUI login manager
-      };
-    };
-  };
-
+  services.displayManager.gdm.enable = true;
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.tormented = {
     isNormalUser = true;
@@ -157,6 +153,10 @@ in
       steam
       protonup-qt
       lutris
+      umu-launcher
+      jetbrains-toolbox
+      nicotine-plus
+      nero-umu
       prismlauncher
       xfce.tumbler
       ffmpegthumbnailer
@@ -193,6 +193,12 @@ in
     };
   };
 
+  qt = {
+    enable = true;
+    platformTheme = "gnome";
+    style = "adwaita-dark";
+  };
+
   home-manager.backupFileExtension = "bkp";  
   home-manager.users.tormented = { pkgs, ...}: {
     home.packages = with pkgs; [
@@ -203,7 +209,11 @@ in
       fish
       fastfetch
       rofi-wayland
+      hyprlock
+      dconf
       alacritty
+      adwaita-icon-theme
+      orchis-theme
       librewolf
       yt-dlp
       waybar
@@ -212,6 +222,33 @@ in
       qimgv
     ];
     home.stateVersion = "25.05";
+
+    dconf = {
+      enable = true;
+      settings = {
+        "org/gnome/desktop/interface" = {
+          color-scheme = "prefer-dark";
+        };
+      };
+    };
+
+    gtk = {
+      enable = true;
+      theme = {
+        name = "Orchis-Dark";
+        package = pkgs.orchis-theme;
+      };
+      iconTheme = {
+        name = "Adwaita";
+        package = pkgs.adwaita-icon-theme;
+      };
+      cursorTheme = {
+        name = "Adwaita";
+        package = pkgs.adwaita-icon-theme;
+      };
+    };
+
+    home.sessionVariables.GTK_THEME = "Orchis-Dark";
 
     programs.fish = {
     	enable = true;
@@ -335,7 +372,7 @@ in
           "custom/exit" = {
             tooltip = false;
             format = "";
-            on-click = "sleep 0.1 && wlogout";
+            on-click = "sleep 0.1 && hyprlock";
           };
           "custom/startmenu" = {
             tooltip = false;
@@ -431,7 +468,7 @@ in
             min-height: 0px;
           }
           window#waybar {
-            background: #1C1C1C;
+            background: rgba(28, 28, 28, 0.7);
             color: #e9e9f4;
           }
           #workspaces button {
@@ -441,12 +478,13 @@ in
           }
           #workspaces button.active {
             color: #e9e9f4;
+            background: rgba(28, 28, 28, 0.7);
           }
           #workspaces button:hover {
             color: #e9e9f4;
           }
           tooltip {
-            background: #1C1C1C;
+            background: rgba(28, 28, 28, 0.7);
             border: 1px solid #e9e9f4;
             border-radius: 12px;
           }
@@ -459,7 +497,7 @@ in
           #pulseaudio, #cpu, #memory, #idle_inhibitor {
             padding: 0px 10px;
             background: #62d6e8;
-            color: #1C1C1C;
+            color: rgba(28, 28, 28, 0.7);
           }
           #custom-startmenu {
             color: #4d4f68;
@@ -470,23 +508,23 @@ in
           #custom-hyprbindings, #network, #battery,
           #custom-notification, #custom-exit {
             background: #00f769;
-            color: #1C1C1C;
+            color: rgba(28, 28, 28, 0.7);
             padding: 0px 10px;
           }
           #tray {
             background: #4d4f68;
-            color: #1C1C1C;
+            color: rgba(28, 28, 28, 0.7);
             padding: 0px 10px;
           }
           #clock {
             font-weight: bold;
             padding: 0px 10px;
-            color: #1C1C1C;
-            background: #b45bcf;
+            color: rgba(28, 28, 28, 0.7);
+            background: #8ffffd;
           }
           #custom-arrow1 {
             font-size: 24px;
-            color: #b45bcf;
+            color: #8ffffd;
             background: #4d4f68;
           }
           #custom-arrow2 {
@@ -496,7 +534,7 @@ in
           }
           #custom-arrow3 {
             font-size: 24px;
-            color: #1C1C1C;
+            color: rgba(28, 28, 28, 0.7);
             background: #00f769;
           }
           #custom-arrow4 {
@@ -551,6 +589,8 @@ in
           "HYPRCURSOR_SIZE,24"
           "XCURSOR_THEME,Bibata-Modern-Ice"
           "XCURSOR_SIZE,24"
+          "GTK_THEME,Orchis-Dark"
+          "QT_STYLE_OVERRIDE,adwaita-dark"
         ];
 
         "$mod" = "SUPER";
@@ -643,13 +683,6 @@ in
 
 
         windowrulev2 = [
-          "opacity 0.80 0.80,class:^(VS[Cc]odium)$"
-          "opacity 0.80 0.80,class:^(GitHub Desktop)$"
-          "opacity 0.90 0.90,class:^(equibop)$"
-          "opacity 0.80 0.80,class:^(feishin)$"
-          "opacity 0.80 0.80,class:^(thunderbird)$"
-          "opacity 0.80 0.80,class:^(Godot)$"
-
           "center,class:^(jetbrains-.*)$,title:^(splash)$,floating:1"
           "nofocus,class:^(jetbrains-.*)$,title:^(splash)$,floating:1"
           "noborder,class:^(jetbrains-.*)$,title:^(splash)$,floating:1"
@@ -660,7 +693,9 @@ in
           "nofocus,class:^(jetbrains-.*)$,title:^(win.*)$,floating:1"
 
           "opacity 0.80 0.80,class:^([Tt]hunar)$"
-          "opacity 0.80 0.80,class:^(org.prismlauncher.PrismLauncher)$"
+          "opacity 0.95 0.95,class:^(org.prismlauncher.PrismLauncher)$"
+          "opacity 0.95 0.95,class:^(codium)$"
+          "opacity 0.90 0.90,class:^(equibop)$"
           "opacity 0.80 0.80,class:^(feishin)$"
           "opacity 0.80 0.80,class:^(xarchiver)$"
           "opacity 0.80 0.80,class:^(qt5ct)$"
@@ -690,6 +725,7 @@ in
           "float,title:^(About Mozilla Firefox)$"
           "float,class:^([Aa]lacritty)$"
           "size 72% 70%,class:^([Aa]lacritty)$"
+          "opacity 1.0, 1.0,class:^([Aa]lacritty)$"
           "float,class:^(qimgv)$"
 
           "size 50% 50%,class:^(qimgv)$"
@@ -769,13 +805,14 @@ in
   
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
+  environment.localBinInPath = true;
   environment.systemPackages = with pkgs; [
     headsetcontrol
     gedit
     wget
     curl
     hypridle
-    adwaita-icon-theme
+    gnome-themes-extra
     gsettings-desktop-schemas
     glib
     hyprcursor
@@ -786,6 +823,8 @@ in
     imagemagick
     gvfs
     swww
+    micromamba
+    pipx
     ffmpeg
     wl-clipboard
     hyprpolkitagent
@@ -819,5 +858,3 @@ in
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "25.11"; # Did you read the comment?
 }
-
-
