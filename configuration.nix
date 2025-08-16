@@ -103,6 +103,8 @@ in
 
   programs.waybar.enable = true;
 
+
+
   programs.hyprland = {
     enable = true;
     portalPackage = pkgs.xdg-desktop-portal-hyprland;
@@ -164,6 +166,7 @@ in
       cava
       teams-for-linux
       gittyup
+      pinta
       xfce.tumbler
       xfce.xfce4-settings
       ffmpegthumbnailer
@@ -220,6 +223,7 @@ in
       dconf
       alacritty
       adwaita-icon-theme
+      dunst
       orchis-theme
       librewolf
       yt-dlp
@@ -262,6 +266,47 @@ in
     	    set fish_greeting
     	    fastfetch
     	'';
+    };
+
+    services.dunst = {
+      enable = true;
+      settings = {
+        global = {
+          width = 300;
+          height = 100;
+          offset = "30x50";
+          follow = "keyboard";
+          origin = "top-right";
+          title = "Dunst";
+          class = "dunst";
+          format = "<b>%s</b> - [NOTIFICATION]\\n%b";
+          force_xinerama = false;
+          transparency = 10;
+          frame_color = "#eceff1";
+          font = "Iosevka Nerd Font Medium 12";
+          corner_radius = 10;
+          word_wrap = "yes";
+          mouse_middle_click = "close_all";
+          mouse_left_click = "close_current";
+        };
+
+        urgency_low = {
+          background = "#1A1B26";
+          foreground = "#ffffff";
+          timeout = 2;
+        };
+        urgency_normal = {
+          background = "#1A1B26";
+          foreground = "#ffffff";
+          timeout = 2;
+        };
+        urgency_critical = {
+          background = "#2e1212ff";
+          foreground = "#ffffff";
+          frame_color = "#ff0000";
+          timeout = 3;
+        };
+      };
     };
 
     programs.fastfetch = {
@@ -373,7 +418,7 @@ in
           fg0 = mkLiteral "#c0caf5";
           fg1 = mkLiteral "#a9b1d6";
           fg2 = mkLiteral "#737aa2";
-          red = mkLiteral "rgba(195, 255, 254, 0.9)";
+          red = mkLiteral "rgba(162, 119, 255, 0.9)";
           green = mkLiteral "#9ece6a";
           yellow = mkLiteral "#e0af68";
           blue = mkLiteral "#7aa2f7";
@@ -681,10 +726,10 @@ in
           #workspaces button {
             padding: 0px 5px;
             background: transparent;
-            color: #62d6e8;
+            color: rgba(162, 119, 255, 1);
           }
           #workspaces button.active {
-            color: #e9e9f4;
+            color: rgba(97, 254, 203, 1);
             background: rgba(16, 16, 16, 0.9);
           }
           #workspaces button:hover {
@@ -703,7 +748,7 @@ in
           }
           #pulseaudio, #cpu, #memory, #idle_inhibitor {
             padding: 0px 10px;
-            background: #62d6e8;
+            background: rgba(97, 254, 203, 1);
             color: rgba(28, 28, 28, 0.7);
           }
           #custom-startmenu {
@@ -714,7 +759,7 @@ in
           }
           #custom-hyprbindings, #network, #battery,
           #custom-notification, #custom-exit {
-            background: #62d6e8;
+            background: rgba(97, 254, 203, 1);
             color: rgba(28, 28, 28, 0.7);
             padding: 0px 10px;
           }
@@ -737,26 +782,26 @@ in
           #custom-arrow2 {
             font-size: 24px;
             color: #4d4f68;
-            background: #62d6e8;
+            background: rgba(97, 254, 203, 1);
           }
           #custom-arrow3 {
             font-size: 24px;
             color: rgba(28, 28, 28, 0.7);
-            background: #62d6e8;
+            background: rgba(97, 254, 203, 1);
           }
           #custom-arrow4 {
             font-size: 24px;
-            color: #62d6e8;
+            color: rgba(97, 254, 203, 1);
             background: transparent;
           }
           #custom-arrow6 {
             font-size: 24px;
             color: #c3fffe;
-            background: #62d6e8;
+            background: rgba(97, 254, 203, 1);
           }
           #custom-arrow7 {
             font-size: 24px;
-            color: #62d6e8;
+            color: rgba(97, 254, 203, 1);
             background: transparent;
           }
         ''
@@ -901,6 +946,7 @@ in
           
           "opacity 0.85 0.85,class:^([Tt]hunar)$"
           "opacity 0.90 0.90,class:^([Tt]hunderbird)$"
+          "opacity 0.90 0.90,class:^([Dd]unst)$"
           "opacity 0.95 0.95,class:^(org.prismlauncher.PrismLauncher)$"
           "opacity 0.95 0.95,class:^(codium)$"
           "opacity 0.90 0.90,class:^(equibop)$"
@@ -1015,6 +1061,11 @@ in
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.localBinInPath = true;
+  environment.variables = {
+    EDITOR = "nano";
+    TERMINAL = "alacritty";
+    GC_INITIAL_HEAP_SIZE = "32M";
+  };
   environment.systemPackages = with pkgs; [
     headsetcontrol
     gedit
