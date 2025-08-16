@@ -735,6 +735,7 @@ in
           "opacity 0.95 0.95,class:^(org.prismlauncher.PrismLauncher)$"
           "opacity 0.95 0.95,class:^(codium)$"
           "opacity 0.90 0.90,class:^(equibop)$"
+          "opacity 0.95 0.95,class:^(com.github.gittyup.)$"
           "opacity 0.80 0.80,class:^(feishin)$"
           "opacity 0.80 0.80,class:^(xarchiver)$"
           "opacity 0.80 0.80,class:^(qt5ct)$"
