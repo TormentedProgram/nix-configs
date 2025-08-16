@@ -307,9 +307,7 @@ in
 
         "window" = {
           location = mkLiteral "center";
-          width = mkLiteral "280px";
-          x-offset = mkLiteral "4px";
-          y-offset = mkLiteral "26px";
+          width = mkLiteral "650px";
 
           background-color = mkLiteral "@bg1";
           border = mkLiteral "1px";
@@ -596,7 +594,7 @@ in
           }
           #workspaces button.active {
             color: #e9e9f4;
-            background: rgba(28, 28, 28, 0.7);
+            background: rgba(16, 16, 16, 0.89);
           }
           #workspaces button:hover {
             color: #e9e9f4;
