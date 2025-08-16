@@ -158,11 +158,11 @@ in
       nicotine-plus
       nero-umu
       prismlauncher
-	  teams-for-linux
+      teams-for-linux
+      gittyup
       xfce.tumbler
-	  xfce.xfce4-settings
+      xfce.xfce4-settings
       ffmpegthumbnailer
-      github-desktop
       obs-studio
       tree
       feishin
