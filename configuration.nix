@@ -90,7 +90,7 @@ in
       nerd-fonts.jetbrains-mono # unstable
       nerd-fonts.fira-code # unstable
       nerd-fonts.fantasque-sans-mono #unstable
-      ];
+    ];
   };
 
   nixpkgs.config.allowUnfree = true;
@@ -274,40 +274,113 @@ in
         inherit (config.lib.formats.rasi) mkLiteral;
       in {
         "*" = {
-          bg = mkLiteral "#24283b";
-          hv = mkLiteral "#9274ca";
-          primary = mkLiteral "#C5C8C6";
-          ug = mkLiteral "#0B2447";
-          background-color = mkLiteral "#24283b";
-          foreground-color = mkLiteral "#C5C8C6";
-          border = 0;
-          kl = "#7aa2f7";
-        };
+          #font = "Iosevka Nerd Font Medium 11";
 
-        "#window" = {
-          width = 700;
-          orientation = mkLiteral "horizontal";
-          border-color = mkLiteral "@primary";
-          border = 3;
-          border-radius = 6;
+          bg0 = mkLiteral "#1a1b26";
+          bg1 = mkLiteral "#1f2335";
+          bg2 = mkLiteral "#24283b";
+          bg3 = mkLiteral "#414868";
+          fg0 = mkLiteral "#c0caf5";
+          fg1 = mkLiteral "#a9b1d6";
+          fg2 = mkLiteral "#737aa2";
+          red = mkLiteral "#f7768e";
+          green = mkLiteral "#9ece6a";
+          yellow = mkLiteral "#e0af68";
+          blue = mkLiteral "#7aa2f7";
+          magenta = mkLiteral "#9a7ecc";
+          cyan = mkLiteral "#4abaaf";
+
+          accent = mkLiteral "@red";
+          urgent = mkLiteral "@yellow";
+
+          background-color = mkLiteral "transparent";
+          text-color = mkLiteral "@fg0";
+
+          margin = 0;
+          padding = 0;
           spacing = 0;
-          children = map mkLiteral [ "mainbox" ];
         };
 
-        "#mainbox" = {
-          spacing = 0;
-          children = map mkLiteral [ "inputbar" "message" "listview" ];
+        "element-icon, element-text, scrollbar" = {
+          cursor = mkLiteral "pointer";
         };
 
-        "#inputbar" = {
-          color = mkLiteral "@kl";
-          padding = 11;
-          border-color = "@primary";
+        "window" = {
+          location = mkLiteral "center";
+          width = mkLiteral "280px";
+          x-offset = mkLiteral "4px";
+          y-offset = mkLiteral "26px";
+
+          background-color = mkLiteral "@bg1";
+          border = mkLiteral "1px";
+          border-color = mkLiteral "@bg3";
+          border-radius = mkLiteral "6px";
         };
 
-        "#textbox" = {
-          color = mkLiteral "@kl";
-          padding = 10;
+        "inputbar" = {
+          spacing = mkLiteral "8px";
+          padding = mkLiteral "4px 8px";
+          children = map mkLiteral [ "icon-search" "entry" ];
+
+          background-color = mkLiteral "@bg0";
+        };
+
+        "icon-search, entry, element-icon, element-text" = {
+          vertical-align = mkLiteral "0.5";
+        };
+
+        "textbox" = {
+          padding = mkLiteral "4px 8px";
+          background-color = mkLiteral "@bg2";
+        };
+
+        "listview" = {
+          padding = mkLiteral "4px 0px";
+          lines = 12;
+          columns = 1;
+          scrollbar = mkLiteral "true";
+          fixed-height = mkLiteral "false";
+          dynamic = mkLiteral "true";
+        };
+
+        "element" = {
+          padding = mkLiteral "4px 8px";
+          spacing = mkLiteral "8px";
+        };
+
+        "element normal urgent" = {
+          text-color = mkLiteral "@urgent";
+        };
+
+        "element normal active" = {
+          text-color = mkLiteral "@accent";
+        };
+        
+        "element alternate active" = {
+          text-color = mkLiteral "@accent";
+        };
+
+        "element selected" = {
+          text-color = mkLiteral "@bg1";
+          background-color = mkLiteral "@accent";
+        };
+
+        "element selected urgent" = {
+          background-color = mkLiteral "@urgent";
+        };
+
+        "element-icon" = {
+          size = mkLiteral "0.8em";
+        };
+
+        "element-text" = {
+          text-color = mkLiteral "inherit";
+        };
+
+        "scrollbar" = {
+          handle-width = mkLiteral "4px";
+          handle-color = mkLiteral "@fg2";
+          padding = mkLiteral "0 4px";
         };
       };
     };
