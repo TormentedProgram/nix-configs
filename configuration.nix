@@ -82,6 +82,8 @@ in
   };
   
   fonts = {
+    fontDir.enable = true;
+    fontconfig.useEmbeddedBitmaps = true;
     packages = with pkgs; [
       noto-fonts
       fira-code
@@ -263,6 +265,104 @@ in
     	    set fish_greeting
     	    fastfetch
     	'';
+    };
+
+    programs.fastfetch = {
+      enable = true;
+      settings =
+        {
+          logo = {
+            source = "nixos";
+            padding = {
+              right = 4;
+            };
+          };
+          display = {
+            size = {
+              binaryPrefix = "si";
+            };
+            color = "blue";
+            separator = "  ";
+          };
+          modules = [
+            {
+              type = "custom";
+              format = "{#1}│ {#}Time";
+            }
+            {
+              type = "datetime";
+              key = "󰅐 Date";
+              format = "{1}-{3}-{11}";
+            }
+            {
+              type = "uptime";
+              key = "󰅐 Uptime";
+            }
+            "break"
+            {
+              type = "custom";
+              format = "{#1}│ {#}Packages";
+            }
+            {
+              type = "packages";
+              key = "󰏖 Packages";
+              format = "{all}";
+            }
+            "break"
+            {
+              type = "custom";
+              format = "{#1}│ {#}Desktop Environment";
+            }
+            {
+              type = "de";
+              key = "󰧨 DE";
+            }
+            {
+              type = "wm";
+              key = "󱂬 WM";
+            }
+            {
+              type = "wmtheme";
+              key = "󰉼 Theme";
+            }
+            {
+              type = "display";
+              key = "󰹑 Resolution";
+            }
+            {
+              type = "shell";
+              key = "󰞷 Shell";
+            }
+            {
+              type = "terminalfont";
+              key = "󰛖 Font";
+            }
+            "break"
+            {
+              type = "custom";
+              format = "{#1}│ {#}Hardware Information";
+            }
+            {
+              type = "cpu";
+              key = "󰻠 CPU";
+            }
+            {
+              type = "gpu";
+              key = "󰢮 GPU";
+            }
+            {
+              type = "memory";
+              key = "󰍛 Memory";
+            }
+            "break"
+            {
+              type = "custom";
+              format = "{#1}│ {#}Media";
+            }
+            "player"
+            "media"
+          ];
+        };
     };
 
     programs.rofi = {
@@ -672,12 +772,19 @@ in
 
     programs.alacritty = {
     	enable = true;
+      theme = "aura";
     	settings = {
     	    terminal.shell = {
     	        program = "fish";
     	    };
           window = {
             opacity = 0.75;
+          };
+          font = {
+            size = 14;
+            normal = {
+              family = "Iosevka Nerd Font";
+            };
           };
     	};
     };
