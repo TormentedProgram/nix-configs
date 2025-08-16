@@ -87,6 +87,7 @@ in
       fira-code
       noto-fonts-cjk-sans
       jetbrains-mono
+      nerd-fonts.iosevka
       nerd-fonts.jetbrains-mono # unstable
       nerd-fonts.fira-code # unstable
       nerd-fonts.fantasque-sans-mono #unstable
@@ -262,9 +263,6 @@ in
     	    set fish_greeting
     	    fastfetch
     	'';
-    	shellAbbrs = {
-    	    nix-update = "sudo nixos-rebuild switch";
-    	};
     };
 
     programs.rofi = {
@@ -274,16 +272,16 @@ in
         inherit (config.lib.formats.rasi) mkLiteral;
       in {
         "*" = {
-          #font = "Iosevka Nerd Font Medium 11";
+          font = "Iosevka Nerd Font Medium 14";
 
-          bg0 = mkLiteral "#1a1b26";
-          bg1 = mkLiteral "#1f2335";
-          bg2 = mkLiteral "#24283b";
-          bg3 = mkLiteral "#414868";
+          bg0 = mkLiteral "rgba(26, 27, 38, 0.8)";
+          bg1 = mkLiteral "rgba(31, 35, 53, 0.8)";
+          bg2 = mkLiteral "rgba(36, 40, 59, 0.8)";
+          bg3 = mkLiteral "rgba(65, 72, 104, 0.8)";
           fg0 = mkLiteral "#c0caf5";
           fg1 = mkLiteral "#a9b1d6";
           fg2 = mkLiteral "#737aa2";
-          red = mkLiteral "#f7768e";
+          red = mkLiteral "rgba(195, 255, 254, 0.9)";
           green = mkLiteral "#9ece6a";
           yellow = mkLiteral "#e0af68";
           blue = mkLiteral "#7aa2f7";
@@ -577,14 +575,14 @@ in
       style = lib.concatStrings [
         ''
           * {
-            font-family: JetBrainsMono Nerd Font Mono;
-            font-size: 14px;
+            font-family: Iosevka Nerd Font;
+            font-size: 16px;
             border-radius: 0px;
             border: none;
             min-height: 0px;
           }
           window#waybar {
-            background: rgba(28, 28, 28, 0.7);
+            background: rgba(31, 35, 53, 0.8);
             color: #e9e9f4;
           }
           #workspaces button {
@@ -594,7 +592,7 @@ in
           }
           #workspaces button.active {
             color: #e9e9f4;
-            background: rgba(16, 16, 16, 0.89);
+            background: rgba(16, 16, 16, 0.9);
           }
           #workspaces button:hover {
             color: #e9e9f4;
@@ -942,29 +940,6 @@ in
     grimblast
     swappy
   ];
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This option defines the first version of NixOS you have installed on this particular machine,
-  # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
-  #
-  # Most users should NEVER change this value after the initial install, for any reason,
-  # even if you've upgraded your system to a new NixOS release.
-  #
-  # This value does NOT affect the Nixpkgs version your packages and OS are pulled from,
-  # so changing it will NOT upgrade your system - see https://nixos.org/manual/nixos/stable/#sec-upgrading for how
-  # to actually do that.
-  #
-  # This value being lower than the current NixOS release does NOT mean your system is
-  # out of date, out of support, or vulnerable.
-  #
-  # Do NOT change this value unless you have manually inspected all the changes it would make to your configuration,
-  # and migrated your data accordingly.
-  #
-  # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
+  
   system.stateVersion = "25.11"; # Did you read the comment?
 }
