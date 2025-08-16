@@ -161,6 +161,7 @@ in
       nicotine-plus
       nero-umu
       prismlauncher
+      cava
       teams-for-linux
       gittyup
       xfce.tumbler
@@ -248,10 +249,6 @@ in
         name = "Adwaita";
         package = pkgs.adwaita-icon-theme;
       };
-      cursorTheme = {
-        name = "Adwaita";
-        package = pkgs.adwaita-icon-theme;
-      };
     };
 
     home.sessionVariables.GTK_THEME = "Orchis-Dark";
@@ -287,7 +284,7 @@ in
           modules = [
             {
               type = "custom";
-              format = "{#1}│ {#}Time";
+              format = "{#1}[{#}Time]";
             }
             {
               type = "datetime";
@@ -301,7 +298,7 @@ in
             "break"
             {
               type = "custom";
-              format = "{#1}│ {#}Packages";
+              format = "{#1}[{#}Packages]";
             }
             {
               type = "packages";
@@ -311,7 +308,7 @@ in
             "break"
             {
               type = "custom";
-              format = "{#1}│ {#}Desktop Environment";
+              format = "{#1}[{#}Desktop Environment]";
             }
             {
               type = "de";
@@ -337,10 +334,12 @@ in
               type = "terminalfont";
               key = "󰛖 Font";
             }
+            "player"
+            "media"
             "break"
             {
               type = "custom";
-              format = "{#1}│ {#}Hardware Information";
+              format = "{#1}[{#}Hardware]";
             }
             {
               type = "cpu";
@@ -354,13 +353,6 @@ in
               type = "memory";
               key = "󰍛 Memory";
             }
-            "break"
-            {
-              type = "custom";
-              format = "{#1}│ {#}Media";
-            }
-            "player"
-            "media"
           ];
         };
     };
@@ -564,10 +556,10 @@ in
           "pulseaudio" = {
             format = "{icon} {volume}% {format_source}";
             format-bluetooth = "{volume}% {icon} {format_source}";
-            format-bluetooth-muted = " {icon} {format_source}";
-            format-muted = " {format_source}";
+            format-bluetooth-muted = "󰝟 {icon} {format_source}";
+            format-muted = "󰝟 MUTED";
             format-source = " {volume}%";
-            format-source-muted = "";
+            format-source-muted = " MUTED";
             format-icons = {
               headphone = "";
               hands-free = "";
@@ -582,6 +574,7 @@ in
               ];
             };
             on-click = "sleep 0.1 && pavucontrol";
+            on-click-middle = "sleep 0.1 && wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
           };
           "custom/exit" = {
             tooltip = false;
@@ -821,6 +814,7 @@ in
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
           "systemctl --user start hyprpolkitagent"
+          "hyprctl setcursor Adwaita 28" # oh my god im gonna kms </3
           "navidrome"
           "thunderbird"
         ];
@@ -891,7 +885,6 @@ in
         };
 
         cursor = {
-          sync_gsettings_theme = true;
           warp_on_change_workspace = 1;
           no_warps = true;
         };
@@ -1027,6 +1020,7 @@ in
     gedit
     wget
     curl
+    hyprcursor
     hypridle
     gnome-themes-extra
     gsettings-desktop-schemas
