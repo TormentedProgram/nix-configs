@@ -748,14 +748,14 @@ in
           }
           #pulseaudio, #cpu, #memory, #idle_inhibitor {
             padding: 0px 10px;
-            background: rgba(97, 254, 203, 1);
+            background: rgba(162, 119, 255, 1);
             color: rgba(28, 28, 28, 0.7);
           }
           #custom-startmenu {
             color: #4d4f68;
             padding: 0px 14px;
             font-size: 20px;
-            background: #c3fffe;
+            background: #e7c3ff;
           }
           #custom-hyprbindings, #network, #battery,
           #custom-notification, #custom-exit {
@@ -796,12 +796,12 @@ in
           }
           #custom-arrow6 {
             font-size: 24px;
-            color: #c3fffe;
-            background: rgba(97, 254, 203, 1);
+            color: #e7c3ff;
+            background: rgba(162, 119, 255, 1);
           }
           #custom-arrow7 {
             font-size: 24px;
-            color: rgba(97, 254, 203, 1);
+            color: rgba(162, 119, 255, 1);
             background: transparent;
           }
         ''
